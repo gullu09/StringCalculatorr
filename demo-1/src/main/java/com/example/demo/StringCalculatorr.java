@@ -1,37 +1,49 @@
 package com.example.demo;
 
-//package com.practice;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 public class StringCalculatorr {
-	public static int add(String numbers) {
+
+    public static int add(String numbers) {
         if (numbers.isEmpty()) {
             return 0;
         }
 
-        // Check for a custom delimiter
-        Matcher matcher = Pattern.compile("//(.+)\n(.*)").matcher(numbers);
+        String delimiter = getCustomDelimiter(numbers);
+        String[] numbersArray = extractNumbers(numbers, delimiter);
+        List<Integer> numbersList = convertToNumbers(numbersArray);
+        handleNegatives(numbersList);
+
+        return sumNumbers(numbersList);
+    }
+
+    private static String getCustomDelimiter(String numbers) {
+        Matcher matcher = Pattern.compile("//\\[(.+)\\]\n(.*)").matcher(numbers);
         String delimiter = ",";
         if (matcher.matches()) {
             delimiter = Pattern.quote(matcher.group(1));
-            numbers = matcher.group(2);
         }
+        return delimiter;
+    }
 
-        // Split the numbers based on the delimiter or newline
-        String[] numbersArray = numbers.split("[" + delimiter + "\n]");
+    private static String[] extractNumbers(String numbers, String delimiter) {
+        return numbers.split("[" + delimiter + "\n]");
+    }
 
-        // Convert the numbers to integers and filter out empty strings
+    private static List<Integer> convertToNumbers(String[] numbersArray) {
         List<Integer> numbersList = new ArrayList<>();
         for (String num : numbersArray) {
             if (!num.isEmpty()) {
                 numbersList.add(Integer.parseInt(num));
             }
         }
+        return numbersList;
+    }
 
-        // Handle negative numbers
+    private static void handleNegatives(List<Integer> numbersList) {
         List<Integer> negatives = new ArrayList<>();
         for (int num : numbersList) {
             if (num < 0) {
@@ -41,8 +53,9 @@ public class StringCalculatorr {
         if (!negatives.isEmpty()) {
             throw new IllegalArgumentException("Negative numbers not allowed: " + negatives);
         }
+    }
 
-        // Sum the numbers
+    private static int sumNumbers(List<Integer> numbersList) {
         int sum = 0;
         for (int num : numbersList) {
             sum += num;
@@ -51,12 +64,13 @@ public class StringCalculatorr {
     }
 
     public static void main(String[] args) {
-        // Test cases
-        System.out.println(add(""));          // Output: 0
-        System.out.println(add("1"));         // Output: 1
-        System.out.println(add("1,5"));       // Output: 6
-        System.out.println(add("1\n2,3"));     // Output: 6
-        System.out.println(add("//;\n1;2"));   // Output: 3
+       
+        System.out.println(add(""));                  
+        System.out.println(add("1"));                 
+        System.out.println(add("1,5"));               
+        System.out.println(add("1\n2,3"));             
+        System.out.println(add("//;\n1;2"));           
+        System.out.println(add("1,1000,3"));          
+        System.out.println(add("//[@]\n1@2@3"));      
     }
-
 }

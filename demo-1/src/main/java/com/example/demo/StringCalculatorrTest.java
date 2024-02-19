@@ -47,4 +47,10 @@ public class StringCalculatorrTest {
     public void testMultipleCustomDelimiters() {
         assertEquals(6, StringCalculatorr.add("//[*][%]\n1*2%3"));
     }
+    
+    @Test
+    public void testIgnoreNumbersGreaterThan1000() {
+    	assertEquals(4,StringCalculatorr.add("1,1000,3"));
+    	assertEquals(5,StringCalculatorr.add("//[@]\n1000@2@3"));   	
+    }
 }
